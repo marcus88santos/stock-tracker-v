@@ -26,7 +26,6 @@
 			axios.get('http://localhost:3000/stock').then(
 				res => {
 					this.body = res.data
-					console.log(this.body)
 				},
 				err => console.log(err)
 			)

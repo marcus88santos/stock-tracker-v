@@ -2,9 +2,9 @@
 	<div>
 		<table>
 			<TableHeader />
-			<!-- <TableBody /> -->
+			<TableBody :stocks="stocks" />
 		</table>
-		<p v-if="!body">
+		<p v-if="stocks.length == 0">
 			Please, insert a stock.
 		</p>
 	</div>
@@ -12,20 +12,20 @@
 
 <script>
 	import TableHeader from './TableHeader.vue'
-	// import TableBody from './TableBody'
+	import TableBody from './TableBody'
 	import axios from 'axios'
 	export default {
 		name: 'Table',
-		components: { TableHeader },
+		components: { TableHeader, TableBody },
 		data () {
 			return {
-				body: [],
+				stocks: [],
 			}
 		},
 		created () {
 			axios.get('http://localhost:3000/stock').then(
 				res => {
-					this.body = res.data
+					this.stocks = res.data.stocks
 				},
 				err => console.log(err)
 			)
@@ -38,5 +38,10 @@
 		color: red;
 		padding-top: 20px;
 		text-align: center;
+	}
+	table {
+		background-color: rgb(40, 40, 40);
+		width: 100%;
+		border-collapse: collapse;
 	}
 </style>

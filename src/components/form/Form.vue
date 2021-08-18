@@ -1,6 +1,11 @@
 <template>
 	<div id="form">
-		<select v-model="stock.type" id="type">
+		<select
+			@change="this.stock.code = ''"
+			required
+			v-model="stock.type"
+			id="type"
+		>
 			<option value="" selected disabled>Tipo</option>
 			<option value="acoes">Ações</option>
 			<option value="fii">FII</option>
@@ -9,8 +14,8 @@
 		<select
 			v-model="stock.code"
 			v-if="stock.type == 'tesouroDireto'"
-			required
 			id="stockT"
+			required
 		>
 			<option value="" selected disabled>Ativo</option>
 			<option value="tdPre2026">TD Pré 2026</option>
@@ -29,8 +34,14 @@
 			type="number"
 			step=".01"
 			id="priceTax"
+			@input="numberFormat($event.target.value)"
 		/>
-		<span id="icon-add" class="material-icons" @click="submit">
+		<span
+			:class="{ valid: isValid }"
+			id="icon-add"
+			class="material-icons"
+			@click="submit"
+		>
 			done
 		</span>
 		<span id="icon-close" class="material-icons" @click="$emit('closeForm')">
@@ -38,6 +49,7 @@
 		</span>
 	</div>
 </template>
+
 <script>
 	export default {
 		name: 'Form',
@@ -49,6 +61,7 @@
 					code: '',
 					targetPriceTax: '',
 				},
+				isValid: false,
 			}
 		},
 		methods: {
@@ -60,9 +73,40 @@
 					targetPriceTax: '',
 				}
 			},
+			isActive () {
+				if (
+					this.stock.type != '' &&
+					this.stock.targetPriceTax != '' &&
+					this.stock.targetPriceTax != ''
+				) {
+					return true
+				}
+				return false
+			},
+			numberFormat (num) {
+				if (num.length == 1) {
+					this.stock.targetPriceTax = (num / 100).toFixed(2)
+				} else {
+					this.stock.targetPriceTax = (
+						this.stock.targetPriceTax * 10
+					).toFixed(2)
+				}
+			},
+		},
+		watch: {
+			'stock.type' () {
+				this.isValid = this.isActive()
+			},
+			'stock.code' () {
+				this.isValid = this.isActive()
+			},
+			'stock.targetPriceTax' () {
+				this.isValid = this.isActive()
+			},
 		},
 	}
 </script>
+
 <style scoped>
 	#form {
 		align-items: center;
@@ -72,18 +116,24 @@
 		padding: 7px 80px;
 	}
 	#icon-close {
-		color: red;
+		color: rgb(255, 80, 80);
 		cursor: pointer;
-		font-size: 30px;
+		font-size: 32px;
 		position: absolute;
 		right: 80px;
+	}
+	#icon-close:hover {
+		color: red;
 	}
 	#icon-add {
 		cursor: pointer;
 		margin-inline: 20px;
 		font-size: 30px;
 	}
-	#icon-add:hover {
+	.valid {
+		color: lightgreen;
+	}
+	.valid:hover {
 		color: rgb(0, 255, 0);
 	}
 	select {
@@ -96,10 +146,21 @@
 		outline: 0px;
 		padding-inline: 3px;
 		width: 130px;
+		color: black;
 	}
 	select:focus {
 		box-shadow: 0 0 4px 2px black;
 	}
+	option {
+		color: black;
+	}
+	option:first-child {
+		color: rgb(100, 100, 100);
+	}
+	select:invalid {
+		color: rgb(100, 100, 100);
+	}
+
 	input {
 		border: 1px solid #ccc;
 		border-radius: 5px;
@@ -116,18 +177,7 @@
 	}
 	input:-webkit-autofill {
 		-webkit-box-shadow: 0 0 0 30px white inset;
-	}
-	::placeholder {
-		color: rgb(100, 100, 100);
-	}
-	select:invalid {
-		color: rgb(100, 100, 100);
-	}
-	select option:first-child {
-		color: rgb(100, 100, 100);
-	}
-	select:invalid option:not(:first-child) {
-		color: black;
+		box-shadow: 0 0 0 30px white inset;
 	}
 	input[type='number'] {
 		width: 130px;

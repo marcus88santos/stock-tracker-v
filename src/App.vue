@@ -2,6 +2,7 @@
 	<Header @open-form="formOn" />
 	<Form v-if="formStatus" @close-form="formOff" />
 	<Table />
+	<table></table>
 </template>
 
 <script>

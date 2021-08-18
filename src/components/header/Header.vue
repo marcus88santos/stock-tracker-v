@@ -49,14 +49,14 @@
 		font-size: 25px;
 	}
 	#icon-add {
-		color: white;
+		color: lightgreen;
 		display: block;
 		font-size: 40px;
 		transition: 0.2s;
+		cursor: pointer;
 	}
 	#icon-add:hover {
 		color: rgb(0, 255, 0);
-		cursor: pointer;
 	}
 	.updated {
 		background-color: rgb(100, 100, 100);

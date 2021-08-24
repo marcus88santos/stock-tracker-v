@@ -18,8 +18,8 @@
 			required
 		>
 			<option value="" selected disabled>Ativo</option>
-			<option value="tdPre2026">TD Pré 2026</option>
-			<option value="tdIpca+2026">TD IPCA+ 2026</option>
+			<option value="TD Pré 2026">TD Pré 2026</option>
+			<option value="TD IPCA+ 2026">TD IPCA+ 2026</option>
 		</select>
 		<input
 			v-model="stock.code"
@@ -70,7 +70,23 @@
 		methods: {
 			submit () {
 				if (this.stock.id) {
-					//realizar update
+					axios
+						.put(
+							`http://localhost:3000/stock/${this.stock.id}`,
+							this.stock
+						)
+						.then(
+							() => {
+								this.stock = {
+									id: '',
+									type: '',
+									code: '',
+									targetPriceTax: '',
+								}
+								this.$emit('force-update')
+							},
+							e => console.log(e)
+						)
 				} else {
 					axios.post('http://localhost:3000/stock', this.stock).then(
 						() => {
@@ -80,6 +96,7 @@
 								code: '',
 								targetPriceTax: '',
 							}
+							this.$emit('force-update')
 						},
 						e => console.log(e)
 					)
@@ -93,7 +110,6 @@
 					}
 					this.$emit('close-form')
 				}
-				this.$emit('force-update')
 			},
 			isActive () {
 				if (
@@ -121,7 +137,6 @@
 				}
 			},
 		},
-		created () {},
 		watch: {
 			'stock.type' () {
 				this.isValid = this.isActive()
@@ -134,6 +149,10 @@
 			},
 			'edStock._id' () {
 				this.stock = this.edStock
+				if (this.edStock.targetPriceTax)
+					this.stock.targetPriceTax = this.edStock.targetPriceTax.toFixed(
+						2
+					)
 			},
 		},
 	}

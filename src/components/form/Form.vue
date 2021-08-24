@@ -7,13 +7,13 @@
 			id="type"
 		>
 			<option value="" selected disabled>Tipo</option>
-			<option value="acoes">Ações</option>
-			<option value="fii">FII</option>
-			<option value="tesouroDireto">Tesouro Direto</option>
+			<option value="Ações">Ações</option>
+			<option value="FII">FII</option>
+			<option value="Tesouro Direto">Tesouro Direto</option>
 		</select>
 		<select
 			v-model="stock.code"
-			v-if="stock.type == 'tesouroDireto'"
+			v-if="stock.type == 'Tesouro Direto'"
 			id="stockT"
 			required
 		>
@@ -34,7 +34,7 @@
 			type="number"
 			step=".01"
 			id="priceTax"
-			@input="numberFormat($event.target.value)"
+			@input="numberFormat($event)"
 		/>
 		<span
 			:class="{ valid: isValid }"
@@ -44,34 +44,56 @@
 		>
 			done
 		</span>
-		<span id="icon-close" class="material-icons" @click="$emit('closeForm')">
+		<span id="icon-close" class="material-icons" @click="$emit('close-form')">
 			close
 		</span>
 	</div>
 </template>
 
 <script>
+	import axios from 'axios'
 	export default {
 		name: 'Form',
-		emits: ['closeForm'],
+		emits: ['close-form', 'force-update'],
 		data () {
 			return {
 				stock: {
-					type: '',
-					code: '',
-					targetPriceTax: '',
+					id: this.edStock._id,
+					type: this.edStock.type,
+					code: this.edStock.code,
+					targetPriceTax: this.edStock.targetPriceTax,
 				},
 				isValid: false,
 			}
 		},
+		props: ['edStock'],
 		methods: {
 			submit () {
-				console.log(this.stock)
-				this.stock = {
-					type: '',
-					code: '',
-					targetPriceTax: '',
+				if (this.stock.id) {
+					//realizar update
+				} else {
+					axios.post('http://localhost:3000/stock', this.stock).then(
+						() => {
+							this.stock = {
+								id: '',
+								type: '',
+								code: '',
+								targetPriceTax: '',
+							}
+						},
+						e => console.log(e)
+					)
 				}
+				if (this.isActive()) {
+					this.stock = {
+						id: '',
+						type: '',
+						code: '',
+						targetPriceTax: '',
+					}
+					this.$emit('close-form')
+				}
+				this.$emit('force-update')
 			},
 			isActive () {
 				if (
@@ -83,16 +105,23 @@
 				}
 				return false
 			},
-			numberFormat (num) {
-				if (num.length == 1) {
-					this.stock.targetPriceTax = (num / 100).toFixed(2)
-				} else {
+			numberFormat (event) {
+				if (
+					event.inputType == 'deleteContentBackward' ||
+					event.inputType == 'deleteContentForward'
+				) {
+					this.stock.targetPriceTax = (0).toFixed(2)
+				}
+				if (event.target.value.length == 1 && event.data != null) {
+					this.stock.targetPriceTax = (event.target.value / 100).toFixed(2)
+				} else if (event.data != null) {
 					this.stock.targetPriceTax = (
 						this.stock.targetPriceTax * 10
 					).toFixed(2)
 				}
 			},
 		},
+		created () {},
 		watch: {
 			'stock.type' () {
 				this.isValid = this.isActive()
@@ -102,6 +131,9 @@
 			},
 			'stock.targetPriceTax' () {
 				this.isValid = this.isActive()
+			},
+			'edStock._id' () {
+				this.stock = this.edStock
 			},
 		},
 	}

@@ -2,7 +2,11 @@
 	<div>
 		<table>
 			<TableHeader />
-			<TableBody :stocks="stocks" />
+			<TableBody
+				:stocks="stocks"
+				@edit-stock="$emit('edit-stock', $event)"
+				@remove-stock="removeStock($event)"
+			/>
 		</table>
 		<p v-if="stocks.length == 0">
 			Please, insert a stock.
@@ -16,6 +20,7 @@
 	import axios from 'axios'
 	export default {
 		name: 'Table',
+		emits: ['edit-stock', 'remove-stock'],
 		components: { TableHeader, TableBody },
 		data () {
 			return {
@@ -23,12 +28,30 @@
 			}
 		},
 		created () {
-			axios.get('http://localhost:3000/stock').then(
-				res => {
-					this.stocks = res.data.stocks
-				},
-				err => console.log(err)
-			)
+			this.update()
+		},
+		methods: {
+			removeStock (event) {
+				axios.delete(`http://localhost:3000/stock/${event._id}`).then(
+					() => this.update(),
+					e => console.log(e)
+				)
+			},
+			update () {
+				axios.get('http://localhost:3000/stock').then(
+					res => {
+						this.stocks = res.data.stocks
+					},
+					err => console.log(err)
+				)
+			},
+		},
+		props: ['forceUpdate'],
+		watch: {
+			forceUpdate () {
+				console.log('update')
+				this.update()
+			},
 		},
 	}
 </script>

@@ -1,42 +1,40 @@
 <template>
-	<tbody>
-		<tr v-for="stock in stocks" :key="stock.index">
-			<td>
-				<span
-					id="icon-remove"
-					class="material-icons"
-					@click="$emit('remove-stock', stock)"
-				>
-					close
-				</span>
-				<span
-					id="icon-edit"
-					class="material-icons"
-					@click="$emit('edit-stock', stock)"
-				>
-					edit
-				</span>
-			</td>
-			<td class="tbody__type">{{ stock.type }}</td>
-			<td class="tbody__code">{{ stock.code }}</td>
-			<td class="tbody__targetPriceTax">
-				{{
-					Intl.NumberFormat('pt-BR', {
-						style: 'decimal',
-						minimumFractionDigits: 2,
-					}).format(stock.targetPriceTax)
-				}}
-			</td>
-			<td v-show="stock.currentPriceTax" class="tbody__currentPriceTax">
-				{{
-					Intl.NumberFormat('pt-BR', {
-						style: 'decimal',
-						minimumFractionDigits: 2,
-					}).format(stock.currentPriceTax)
-				}}
-			</td>
-		</tr>
-	</tbody>
+	<tr v-for="stock in stocks" :key="stock.index">
+		<td>
+			<span
+				id="icon-remove"
+				class="material-icons"
+				@click="$emit('remove-stock', stock)"
+			>
+				close
+			</span>
+			<span
+				id="icon-edit"
+				class="material-icons"
+				@click="$emit('edit-stock', stock)"
+			>
+				edit
+			</span>
+		</td>
+		<td class="tbody__type">{{ stock.type }}</td>
+		<td class="tbody__code">{{ stock.code }}</td>
+		<td class="tbody__targetPriceTax">
+			{{
+				Intl.NumberFormat('pt-BR', {
+					style: 'decimal',
+					minimumFractionDigits: 2,
+				}).format(stock.targetPriceTax)
+			}}
+		</td>
+		<td v-show="stock.currentPriceTax" class="tbody__currentPriceTax">
+			{{
+				Intl.NumberFormat('pt-BR', {
+					style: 'decimal',
+					minimumFractionDigits: 2,
+				}).format(stock.currentPriceTax)
+			}}
+		</td>
+	</tr>
 </template>
 
 <script>

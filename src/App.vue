@@ -7,16 +7,18 @@
 		@force-update="forceUpdate"
 	/>
 	<Table @edit-stock="formOn($event)" :forceUpdate="update" />
+	<Footer />
 </template>
 
 <script>
 	import Header from './components/header/Header.vue'
 	import Form from './components/form/Form.vue'
 	import Table from './components/table/Table.vue'
+	import Footer from './components/footer/Footer.vue'
 	export default {
 		name: 'App',
 		emits: ['edit-stock'],
-		components: { Header, Form, Table },
+		components: { Header, Form, Table, Footer },
 		data () {
 			return {
 				formStatus: false,
@@ -58,5 +60,9 @@
 		margin: 0;
 		padding: 0;
 		box-sizing: border-box;
+	}
+	body {
+		background-color: rgb(0, 0, 0);
+		height: 400px;
 	}
 </style>

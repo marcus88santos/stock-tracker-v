@@ -8,8 +8,8 @@
 				@remove-stock="removeStock($event)"
 			/>
 		</table>
-		<p v-if="stocks.length == 0">
-			Please, insert a stock.
+		<p v-if="message">
+			{{ message }}
 		</p>
 	</div>
 </template>
@@ -25,6 +25,7 @@
 		data () {
 			return {
 				stocks: [],
+				message: 'Waiting to API connection...',
 			}
 		},
 		created () {
@@ -41,8 +42,15 @@
 				axios.get('http://localhost:3000/stock').then(
 					res => {
 						this.stocks = res.data.stocks
+						if (this.stocks.length == 0) {
+							this.message = 'Please, insert a stock.'
+						} else {
+							this.message = ''
+						}
 					},
-					err => console.log(err)
+					err => {
+						console.log(err)
+					}
 				)
 			},
 		},
@@ -59,7 +67,7 @@
 <style scoped>
 	p {
 		color: red;
-		padding-top: 20px;
+		padding: 20px;
 		text-align: center;
 	}
 	table {
